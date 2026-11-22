@@ -6,6 +6,9 @@ Words like **contiguous subarray / substring**, **size k**, **longest / shortest
 ## Core idea
 Don’t recompute each window. **Add the new element, remove the old one** → O(n) instead of O(n·k).
 
+## Animation: max sum of window size 3
+<div data-anim="sliding"></div>
+
 ## Fixed-size template (Java)
 ```java
 int windowValue = 0, best = 0;

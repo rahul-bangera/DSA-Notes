@@ -1,6 +1,13 @@
 {
  "patterns": [
   {
+   "id": "two-pointers",
+   "name": "Two Pointers",
+   "cheat": "patterns/two-pointers/README.md",
+   "notes": [],
+   "soon": false
+  },
+  {
    "id": "sliding-window",
    "name": "Sliding Window",
    "cheat": "patterns/sliding-window/README.md",
@@ -9,15 +16,92 @@
      "n": 1343,
      "title": "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold",
      "level": "Medium",
+     "date": "",
+     "rev": true,
+     "ok": false,
      "path": "patterns/sliding-window/1343-subarrays-size-k-avg-threshold.md"
     },
     {
      "n": 1456,
      "title": "Maximum Number of Vowels in a Substring of Given Length",
      "level": "Medium",
+     "date": "",
+     "rev": true,
+     "ok": false,
      "path": "patterns/sliding-window/1456-max-vowels-substring-k.md"
     }
-   ]
+   ],
+   "soon": false
+  },
+  {
+   "id": "prefix-sum",
+   "name": "Prefix Sum",
+   "cheat": "patterns/prefix-sum/README.md",
+   "notes": [],
+   "soon": false
+  },
+  {
+   "id": "binary-search",
+   "name": "Binary Search",
+   "cheat": "patterns/binary-search/README.md",
+   "notes": [],
+   "soon": false
+  },
+  {
+   "id": "stack",
+   "name": "Stack",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "linked-list",
+   "name": "Linked List",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "trees",
+   "name": "Trees",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "heap",
+   "name": "Heap",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "backtracking",
+   "name": "Backtracking",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "graphs",
+   "name": "Graphs",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "dp",
+   "name": "Dynamic Programming",
+   "cheat": null,
+   "notes": [],
+   "soon": true
+  },
+  {
+   "id": "greedy",
+   "name": "Greedy",
+   "cheat": null,
+   "notes": [],
+   "soon": true
   }
  ]
 }

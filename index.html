@@ -25,39 +25,74 @@ main{margin:54px 0 0 290px;padding:28px 40px 60px;display:flex;gap:40px}article{
 kbd{border:1px solid var(--bd);border-radius:4px;padding:0 5px;background:var(--cd)}
 @media(max-width:1100px){#toc{display:none}}
 @media(max-width:800px){#menu{display:block}aside{transform:translateX(-100%);transition:.2s}aside.open{transform:none}main{margin-left:0;padding:20px 16px}}
+#pm{margin-right:4px}#pd{position:fixed;top:54px;left:0;width:310px;max-height:75vh;overflow:auto;background:var(--bg);border:1px solid var(--bd);border-radius:0 0 10px 10px;box-shadow:0 8px 24px #0003;padding:8px;display:none;z-index:6}#pd.open{display:block}
+#pd a{display:block;padding:4px 8px 4px 22px;color:var(--tx);text-decoration:none;border-radius:6px;font-size:.88rem;line-height:1.4}#pd a:hover{background:var(--cd)}#pd a.on{background:var(--ac);color:#fff}#pd>a{padding-left:8px;font-weight:600}
+.soon{padding:6px 8px;color:var(--mu);font-size:.9rem}.soon span{font-size:.7rem;border:1px solid var(--bd);border-radius:99px;padding:0 6px}#rv{width:100%;margin-bottom:8px}
+.an{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:26px 0 6px}.ce{width:48px;height:54px;border:2px solid var(--bd);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;position:relative;background:var(--bg);transition:.25s}
+.ce small{font-size:.6rem;color:var(--mu);font-weight:400}.ce u{position:absolute;top:-20px;font-size:.68rem;text-decoration:none;color:var(--ac);font-weight:700;white-space:nowrap}
+.ce.w{background:#ddf4ff;border-color:#0969da;color:#0b3d66}.ce.p{background:#fff8c5;border-color:#d29922;color:#4d3800}.ce.m{background:#f0e6ff;border-color:#8250df;color:#3b1d78}.ce.x{opacity:.3}
+.at{text-align:center;font-size:.9rem;margin:14px 0 8px;min-height:1.4em}.ab{display:flex;gap:8px;justify-content:center;margin-bottom:10px}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:16px 0}.st div{border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center;background:var(--sb)}.st b{display:block;font-size:1.4rem}.st span{font-size:.75rem;color:var(--mu)}
+.bar{display:flex;align-items:center;gap:10px;margin:6px 0;font-size:.9rem}.bar span{width:140px}.bar div{flex:1;height:10px;background:var(--cd);border-radius:6px;overflow:hidden}.bar b{display:block;height:100%;background:var(--ac)}
+.sq{display:inline-block;width:18px;height:18px;border-radius:4px;background:var(--cd);margin-right:4px}.sq.on{background:#1a7f37}
+@media(max-width:800px){.logo{display:none}}
 </style></head><body>
-<header><button class="ib" id="menu">☰</button><span class="logo">&lt;/&gt; DSA Notes</span><input id="q" placeholder="Search problems…  ( / )"><button class="ib" id="th">🌓</button></header>
+<header><button class="ib" id="menu">☰</button><button class="ib" id="pm">📂 Patterns ▾</button><span class="logo">&lt;/&gt; DSA Notes</span><input id="q" placeholder="Search problems…  ( / )"><button class="ib" id="th">🌓</button></header><div id="pd"></div>
 <aside id="nav">Loading topics…</aside>
 <main><article><div id="md"></div><div id="pg"></div></article><div id="toc"></div></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script>
-const $=s=>document.querySelector(s),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-let M,flat=[];const R=document.documentElement;
+<script>const $=s=>document.querySelector(s),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let M,flat=[],REV=false;const R=document.documentElement;
 R.dataset.theme=localStorage.getItem('t')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 $('#th').onclick=()=>{R.dataset.theme=R.dataset.theme==='dark'?'light':'dark';localStorage.setItem('t',R.dataset.theme)};
 $('#menu').onclick=()=>$('#nav').classList.toggle('open');
-async function init(){
-  try{M=await (await fetch('manifest.json?'+Date.now())).json()}catch(e){$('#nav').textContent='manifest.json not found';return}
-  flat=M.patterns.flatMap(p=>p.notes);side('');route();
+$('#pm').onclick=e=>{e.stopPropagation();$('#pd').classList.toggle('open')};
+document.addEventListener('click',e=>{if(!e.target.closest('#pd,#pm')||e.target.closest('#pd a'))$('#pd').classList.remove('open')});
+//A
+const lab=(o,i,s)=>{o[i]=(o[i]?o[i]+'/':'')+s};
+const ANIMS={
+ sliding(){const a=[2,1,5,1,3,2],k=3,S=[];let best=0;for(let i=0;i+k<=a.length;i++){const s=a.slice(i,i+k).reduce((x,y)=>x+y),c={};for(let j=i;j<i+k;j++)c[j]='w';best=Math.max(best,s);
+  S.push({a,c,l:{[i+k-1]:i?'in':'',[i-1]:'out'},t:`Window [${a.slice(i,i+k).join(', ')}] → sum ${s}, best so far ${best}`})}return S},
+ two(){const a=[1,2,4,6,8,11],T=10,S=[];let l=0,r=a.length-1;while(l<r){const s=a[l]+a[r];
+  S.push({a,c:{[l]:'p',[r]:'p'},l:{[l]:'L',[r]:'R'},t:`${a[l]} + ${a[r]} = ${s} `+(s==T?'= target ✅ found!':s>T?`> ${T} → move R left`:`< ${T} → move L right`)});if(s==T)break;s>T?r--:l++}return S},
+ bs(){const a=[1,3,5,7,9,11,13],T=11,S=[];let lo=0,hi=a.length-1;while(lo<=hi){const m=(lo+hi)>>1,c={},l={};
+  for(let i=0;i<a.length;i++)if(i<lo||i>hi)c[i]='x';c[m]='m';lab(l,lo,'lo');lab(l,hi,'hi');lab(l,m,'mid');
+  S.push({a,c,l,t:`mid=${m} → ${a[m]} `+(a[m]==T?'= target ✅ found!':a[m]<T?`< ${T} → lo = mid+1`:`> ${T} → hi = mid-1`)});if(a[m]==T)break;a[m]<T?lo=m+1:hi=m-1}return S}
+};
+//B
+function mount(el){const S=ANIMS[el.dataset.anim]();let i=0;el.innerHTML='<div class="an"></div><div class="at"></div><div class="ab"><button class="ib">◀ Prev</button><button class="ib">Next ▶</button><button class="ib">↺</button></div>';
+ const [pv,nx,rs]=el.querySelectorAll('button'),box=el.children[0],tx=el.children[1];
+ const draw=()=>{const s=S[i];box.innerHTML=s.a.map((v,j)=>`<div class="ce ${s.c[j]||''}"><u>${(s.l&&s.l[j])||''}</u>${v}<small>${j}</small></div>`).join('');tx.textContent=`Step ${i+1}/${S.length}: ${s.t}`};
+ pv.onclick=()=>{i=Math.max(0,i-1);draw()};nx.onclick=()=>{i=Math.min(S.length-1,i+1);draw()};rs.onclick=()=>{i=0;draw()};draw()}
+function tree(q,rev,all){
+  return M.patterns.map(p=>{
+    if(p.soon)return all?`<div class="soon">${esc(p.name)} <span>soon</span></div>`:'';
+    const ns=p.notes.filter(n=>(!q||(n.n+' '+n.title+' '+p.name).toLowerCase().includes(q))&&(!rev||n.rev));
+    if(!ns.length&&(q||rev))return '';
+    return `<details ${all?'':'open'}><summary>${esc(p.name)} <span>${p.notes.length}</span></summary>`+(p.cheat&&!q&&!rev?`<a href="#${p.cheat}" data-p="${p.cheat}">📖 Cheat sheet</a>`:'')+
+      ns.map(n=>`<a href="#${n.path}" data-p="${n.path}"><i class="d ${n.level}"></i>${n.n}. ${esc(n.title)}${n.rev?' 🟡':''}</a>`).join('')+'</details>'}).join('')||'<p style="padding:8px;color:var(--mu)">No match</p>';
 }
-function side(q){
-  q=q.toLowerCase();
-  $('#nav').innerHTML=M.patterns.map(p=>{
-    const ns=p.notes.filter(n=>!q||(n.n+' '+n.title+' '+p.name).toLowerCase().includes(q));
-    if(!ns.length)return '';
-    return `<details open><summary>${esc(p.name)} <span>${p.notes.length}</span></summary>`+
-      (p.cheat&&!q?`<a href="#${p.cheat}" data-p="${p.cheat}">📖 Cheat sheet</a>`:'')+
-      ns.map(n=>`<a href="#${n.path}" data-p="${n.path}"><i class="d ${n.level}"></i>${n.n}. ${esc(n.title)}</a>`).join('')+`</details>`}).join('')||'<p style="padding:8px;color:var(--mu)">No match</p>';
-  mark();
+function side(){$('#nav').innerHTML=`<button class="ib" id="rv">${REV?'✅ Revise only (click to show all)':'🟡 Show Revise only'}</button>`+tree($('#q').value.toLowerCase(),REV,false);$('#rv').onclick=()=>{REV=!REV;side()};mark()}
+function mark(){const p=decodeURIComponent(location.hash.slice(1));document.querySelectorAll('#nav a,#pd a').forEach(a=>a.classList.toggle('on',p!==''&&a.dataset.p===p))}
+function home(){
+  const day=d=>d.toLocaleDateString('en-CA'),ds=new Set(flat.map(n=>n.date).filter(Boolean)),lv=l=>flat.filter(n=>n.level===l).length,rev=flat.filter(n=>n.rev),ok=flat.filter(n=>n.ok).length;
+  let st=0,d=new Date();if(!ds.has(day(d)))d.setDate(d.getDate()-1);while(ds.has(day(d))){st++;d.setDate(d.getDate()-1)}
+  const live=M.patterns.filter(p=>p.notes.length),mx=Math.max(1,...live.map(p=>p.notes.length));
+  const cal=[...Array(14)].map((_,i)=>{const x=new Date();x.setDate(x.getDate()-13+i);return `<i class="sq ${ds.has(day(x))?'on':''}" title="${day(x)}"></i>`}).join('');
+  $('#md').innerHTML=`<h1>&lt;/&gt; DSA Notes</h1><p>Pick a pattern from <b>📂 Patterns</b> (top left) or press <kbd>/</kbd> to search.</p>
+  <div class="st"><div><b>${flat.length}</b><span>Solved</span></div><div><b>${lv('Easy')}/${lv('Medium')}/${lv('Hard')}</b><span>Easy / Med / Hard</span></div><div><b>${ok}</b><span>Mastered</span></div><div><b>${rev.length}</b><span>To revise</span></div><div><b>🔥 ${st}</b><span>Day streak</span></div></div>
+  <h2>Last 14 days</h2><p>${cal}</p><h2>By pattern</h2>`+live.map(p=>`<div class="bar"><span>${esc(p.name)}</span><div><b style="width:${p.notes.length/mx*100}%"></b></div><em>${p.notes.length}</em></div>`).join('')+
+  `<h2>🟡 To revise</h2>`+(rev.length?rev.map(n=>`<div><a href="#${n.path}">${n.n}. ${esc(n.title)}</a></div>`).join(''):'<p>Nothing pending 🎉</p>');
+  $('#toc').innerHTML='';$('#pg').innerHTML='';mark();
 }
-function mark(){const p=decodeURIComponent(location.hash.slice(1));document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p))}
 async function route(){
   const p=decodeURIComponent(location.hash.slice(1));$('#nav').classList.remove('open');
-  if(!p){$('#md').innerHTML=`<h1>&lt;/&gt; DSA Notes</h1><p>${flat.length} problems across ${M.patterns.length} patterns.</p><p>Select a problem from the sidebar, or press <kbd>/</kbd> to search.</p>`;$('#toc').innerHTML='';$('#pg').innerHTML='';mark();return}
+  if(!p){home();return}
   const r=await fetch(p+'?'+Date.now());if(!r.ok){$('#md').innerHTML='<h1>Not found</h1>';return}
   $('#md').innerHTML=marked.parse(await r.text());
   document.querySelectorAll('#md pre code').forEach(b=>hljs.highlightElement(b));
+  document.querySelectorAll('#md [data-anim]').forEach(mount);
   const hs=[...document.querySelectorAll('#md h2,#md h3')];
   $('#toc').innerHTML=hs.length?'<b>On this page</b>'+hs.map((h,i)=>(h.id='h'+i,`<a href="#" data-i="${i}" class="${h.tagName==='H3'?'s':''}">${esc(h.textContent)}</a>`)).join(''):'';
   $('#toc').onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();$('#h'+a.dataset.i).scrollIntoView({behavior:'smooth'})}};
@@ -65,7 +100,11 @@ async function route(){
   $('#pg').innerHTML=i<0?'':`${pv?`<a href="#${pv.path}">← ${pv.n}. ${esc(pv.title.slice(0,28))}</a>`:'<span></span>'}${nx?`<a href="#${nx.path}">${nx.n}. ${esc(nx.title.slice(0,28))} →</a>`:''}`;
   mark();scrollTo(0,0);
 }
-$('#q').oninput=e=>side(e.target.value);
+async function init(){
+  try{M=await (await fetch('manifest.json?'+Date.now())).json()}catch(e){$('#nav').textContent='manifest.json not found';return}
+  flat=M.patterns.flatMap(p=>p.notes);$('#pd').innerHTML='<a href="#" data-p="">🏠 Dashboard</a>'+tree('',false,true);side();route();
+}
+$('#q').oninput=side;
 $('#q').onkeydown=e=>{if(e.key==='Enter'){const a=$('#nav a[data-p$=".md"]:not([data-p$="README.md"])');if(a){location.hash=a.dataset.p;e.target.blur()}}};
 addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==$('#q')){e.preventDefault();$('#q').focus()}});
 addEventListener('hashchange',route);init();

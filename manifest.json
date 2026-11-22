@@ -1,0 +1,23 @@
+{
+ "patterns": [
+  {
+   "id": "sliding-window",
+   "name": "Sliding Window",
+   "cheat": "patterns/sliding-window/README.md",
+   "notes": [
+    {
+     "n": 1343,
+     "title": "Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold",
+     "level": "Medium",
+     "path": "patterns/sliding-window/1343-subarrays-size-k-avg-threshold.md"
+    },
+    {
+     "n": 1456,
+     "title": "Maximum Number of Vowels in a Substring of Given Length",
+     "level": "Medium",
+     "path": "patterns/sliding-window/1456-max-vowels-substring-k.md"
+    }
+   ]
+  }
+ ]
+}

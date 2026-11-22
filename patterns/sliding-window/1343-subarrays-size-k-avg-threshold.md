@@ -40,6 +40,7 @@ class Solution {
     }
 }
 ```
+> Alternative: `sum / k >= threshold` also passes, but integer division drops decimals. Prefer `sum >= threshold * k`.
 
 ## ⏱ Complexity
 Time O(n) | Space O(1)

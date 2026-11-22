@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DSA Notes</title>
+<style>
+:root{--bg:#fff;--sb:#f6f8fa;--tx:#1f2328;--mu:#656d76;--bd:#d8dee4;--ac:#0969da;--cd:#eff2f5;--kw:#cf222e;--st:#0a3069;--cm:#6e7781;--nm:#0550ae;--ti:#8250df}
+[data-theme=dark]{--bg:#0d1117;--sb:#161b22;--tx:#e6edf3;--mu:#8d96a0;--bd:#30363d;--ac:#58a6ff;--cd:#1f2630;--kw:#ff7b72;--st:#a5d6ff;--cm:#8b949e;--nm:#79c0ff;--ti:#d2a8ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+header{position:fixed;inset:0 0 auto;height:54px;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:12px;padding:0 16px;z-index:5}
+.logo{font-weight:700;color:var(--ac);white-space:nowrap}
+#q{flex:1;max-width:420px;margin-right:auto;padding:7px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--sb);color:var(--tx);font-size:.9rem}
+.ib{background:none;border:1px solid var(--bd);color:var(--tx);border-radius:8px;padding:5px 10px;cursor:pointer}#menu{display:none}
+aside{position:fixed;top:54px;bottom:0;left:0;width:290px;overflow:auto;background:var(--sb);border-right:1px solid var(--bd);padding:10px;z-index:4}
+summary{cursor:pointer;font-weight:600;padding:6px 8px}summary span{color:var(--mu);font-weight:400;font-size:.8rem}
+aside a{display:block;padding:4px 8px 4px 22px;color:var(--tx);text-decoration:none;border-radius:6px;font-size:.88rem;line-height:1.4}
+aside a:hover{background:var(--cd)}aside a.on{background:var(--ac);color:#fff}
+.d{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;background:#d29922}.d.Easy{background:#1a7f37}.d.Hard{background:#cf222e}
+main{margin:54px 0 0 290px;padding:28px 40px 60px;display:flex;gap:40px}article{flex:1;min-width:0;max-width:780px}
+#toc{width:200px;position:sticky;top:80px;align-self:flex-start;font-size:.82rem;max-height:80vh;overflow:auto}
+#toc b{display:block;margin-bottom:6px;color:var(--mu);text-transform:uppercase;font-size:.72rem}#toc a{display:block;color:var(--mu);text-decoration:none;padding:2px 0}#toc a.s{padding-left:12px}#toc a:hover{color:var(--ac)}
+#md h1{font-size:1.7rem;margin-top:0}#md h2{font-size:1.2rem;border-bottom:1px solid var(--bd);padding-bottom:4px;margin-top:1.8em}
+#md pre{background:var(--cd);border-radius:8px;padding:14px;overflow-x:auto;font-size:13px;line-height:1.5}#md code{font-family:ui-monospace,Menlo,monospace;background:var(--cd);padding:1px 5px;border-radius:5px;font-size:.88em}#md pre code{background:none;padding:0}
+#md table{border-collapse:collapse;display:block;overflow-x:auto}#md th,#md td{border:1px solid var(--bd);padding:6px 12px}#md th{background:var(--cd)}
+#md blockquote{margin:1em 0;padding:4px 16px;border-left:4px solid var(--ac);background:var(--cd);border-radius:0 8px 8px 0}#md img{vertical-align:middle}#md a{color:var(--ac)}
+.hljs-keyword,.hljs-built_in{color:var(--kw)}.hljs-string{color:var(--st)}.hljs-comment{color:var(--cm)}.hljs-number,.hljs-literal{color:var(--nm)}.hljs-title,.hljs-type{color:var(--ti)}
+#pg{display:flex;justify-content:space-between;gap:10px;margin-top:40px}#pg a{border:1px solid var(--bd);border-radius:8px;padding:8px 14px;color:var(--ac);text-decoration:none;font-size:.9rem}
+kbd{border:1px solid var(--bd);border-radius:4px;padding:0 5px;background:var(--cd)}
+@media(max-width:1100px){#toc{display:none}}
+@media(max-width:800px){#menu{display:block}aside{transform:translateX(-100%);transition:.2s}aside.open{transform:none}main{margin-left:0;padding:20px 16px}}
+</style></head><body>
+<header><button class="ib" id="menu">☰</button><span class="logo">&lt;/&gt; DSA Notes</span><input id="q" placeholder="Search problems…  ( / )"><button class="ib" id="th">🌓</button></header>
+<aside id="nav">Loading topics…</aside>
+<main><article><div id="md"></div><div id="pg"></div></article><div id="toc"></div></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let M,flat=[];const R=document.documentElement;
+R.dataset.theme=localStorage.getItem('t')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+$('#th').onclick=()=>{R.dataset.theme=R.dataset.theme==='dark'?'light':'dark';localStorage.setItem('t',R.dataset.theme)};
+$('#menu').onclick=()=>$('#nav').classList.toggle('open');
+async function init(){
+  try{M=await (await fetch('manifest.json?'+Date.now())).json()}catch(e){$('#nav').textContent='manifest.json not found';return}
+  flat=M.patterns.flatMap(p=>p.notes);side('');route();
+}
+function side(q){
+  q=q.toLowerCase();
+  $('#nav').innerHTML=M.patterns.map(p=>{
+    const ns=p.notes.filter(n=>!q||(n.n+' '+n.title+' '+p.name).toLowerCase().includes(q));
+    if(!ns.length)return '';
+    return `<details open><summary>${esc(p.name)} <span>${p.notes.length}</span></summary>`+
+      (p.cheat&&!q?`<a href="#${p.cheat}" data-p="${p.cheat}">📖 Cheat sheet</a>`:'')+
+      ns.map(n=>`<a href="#${n.path}" data-p="${n.path}"><i class="d ${n.level}"></i>${n.n}. ${esc(n.title)}</a>`).join('')+`</details>`}).join('')||'<p style="padding:8px;color:var(--mu)">No match</p>';
+  mark();
+}
+function mark(){const p=decodeURIComponent(location.hash.slice(1));document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===p))}
+async function route(){
+  const p=decodeURIComponent(location.hash.slice(1));$('#nav').classList.remove('open');
+  if(!p){$('#md').innerHTML=`<h1>&lt;/&gt; DSA Notes</h1><p>${flat.length} problems across ${M.patterns.length} patterns.</p><p>Select a problem from the sidebar, or press <kbd>/</kbd> to search.</p>`;$('#toc').innerHTML='';$('#pg').innerHTML='';mark();return}
+  const r=await fetch(p+'?'+Date.now());if(!r.ok){$('#md').innerHTML='<h1>Not found</h1>';return}
+  $('#md').innerHTML=marked.parse(await r.text());
+  document.querySelectorAll('#md pre code').forEach(b=>hljs.highlightElement(b));
+  const hs=[...document.querySelectorAll('#md h2,#md h3')];
+  $('#toc').innerHTML=hs.length?'<b>On this page</b>'+hs.map((h,i)=>(h.id='h'+i,`<a href="#" data-i="${i}" class="${h.tagName==='H3'?'s':''}">${esc(h.textContent)}</a>`)).join(''):'';
+  $('#toc').onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();$('#h'+a.dataset.i).scrollIntoView({behavior:'smooth'})}};
+  const i=flat.findIndex(n=>n.path===p),pv=flat[i-1],nx=flat[i+1];
+  $('#pg').innerHTML=i<0?'':`${pv?`<a href="#${pv.path}">← ${pv.n}. ${esc(pv.title.slice(0,28))}</a>`:'<span></span>'}${nx?`<a href="#${nx.path}">${nx.n}. ${esc(nx.title.slice(0,28))} →</a>`:''}`;
+  mark();scrollTo(0,0);
+}
+$('#q').oninput=e=>side(e.target.value);
+$('#q').onkeydown=e=>{if(e.key==='Enter'){const a=$('#nav a[data-p$=".md"]:not([data-p$="README.md"])');if(a){location.hash=a.dataset.p;e.target.blur()}}};
+addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==$('#q')){e.preventDefault();$('#q').focus()}});
+addEventListener('hashchange',route);init();
+</script></body></html>

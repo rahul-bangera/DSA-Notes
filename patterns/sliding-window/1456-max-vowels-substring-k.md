@@ -10,7 +10,7 @@ Max number of vowels in any substring of length `k`.
 ## 💡 Intuition
 Keep a running vowel `count`. A vowel entering → `count++`, a vowel leaving → `count--`.
 
-## �� Tiny example
+## 🧪 Tiny example
 `s="abciiidef", k=3`
 
 | Window | Vowels | Max so far |
